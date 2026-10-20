@@ -9,7 +9,7 @@
 <style>
 :root { color-scheme: dark; }
 * { scrollbar-width: thin; scrollbar-color: #334155 transparent; box-sizing: border-box; }
-body { background: #0b1120; color: #e2e8f0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; margin: 0; padding-bottom: env(safe-area-inset-bottom); }
+body { background: #0b1120; color: #e2e8f0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; margin: 0; padding-bottom: env(safe-area-inset-bottom); overflow-x: hidden; }
 .panel { background: #111b2e; border: 1px solid #22304a; border-radius: 16px; }
 .field { width: 100%; background: #0b1324; border: 1px solid #2a3954; border-radius: 10px; padding: 10px 12px; color: #f8fafc; outline: none; font-size: 14px; }
 .field:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px #3b82f622; }
@@ -23,7 +23,7 @@ body { background: #0b1120; color: #e2e8f0; font-family: Inter, ui-sans-serif, s
 .navbtn { display: flex; width: 100%; align-items: center; gap: 12px; padding: 11px 13px; border-radius: 10px; color: #94a3b8; text-align: left; font-size: 13px; transition: .15s; cursor: pointer; }
 .navbtn:hover { background: #17243a; color: #fff; }
 .navbtn.active { background: #1d4ed8; color: #fff; box-shadow: 0 8px 22px #1d4ed833; }
-.table-wrap { overflow: auto; width: 100%; }
+.table-wrap { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
 .table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .table th { color: #94a3b8; text-transform: uppercase; font-size: 10px; letter-spacing: .07em; background: #0d1728; text-align: left; }
 .table th, .table td { padding: 13px 14px; border-bottom: 1px solid #22304a; white-space: nowrap; }
@@ -39,14 +39,14 @@ body { background: #0b1120; color: #e2e8f0; font-family: Inter, ui-sans-serif, s
 .kpi { background: linear-gradient(135deg, #121e33, #0e1728); border: 1px solid #25344d; border-radius: 15px; padding: 18px; }
 input[type=checkbox] { accent-color: #3b82f6; }
 
-/* ADAPTAÇÃO MOBILE PERFEITA */
+/* CORREÇÃO MOBILE COMPLETA */
 #mobile-nav { display: none; }
 
 @media(max-width: 1024px) {
   #sidebar { display: none !important; }
-  main { margin-left: 0 !important; padding-bottom: 80px; }
-  #mobile-nav { display: flex; }
-  .content { padding: 16px !important; }
+  main { margin-left: 0 !important; width: 100% !important; padding-bottom: 85px; }
+  #mobile-nav { display: flex !important; }
+  .content { padding: 14px !important; width: 100% !important; max-width: 100vw !important; overflow-x: hidden; }
 }
 </style>
 </head>
@@ -76,7 +76,7 @@ input[type=checkbox] { accent-color: #3b82f6; }
 </div>
 
 <!-- APLICAÇÃO PRINCIPAL -->
-<div id="app" class="hidden min-h-screen flex flex-col">
+<div id="app" class="hidden min-h-screen flex flex-col w-full">
   <!-- SIDEBAR DESKTOP -->
   <aside id="sidebar" class="fixed left-0 top-0 z-30 flex h-screen w-64 flex-col border-r border-slate-800 bg-slate-950">
     <div class="brand flex items-center gap-3 border-b border-slate-800 px-5 py-5">
@@ -121,8 +121,8 @@ input[type=checkbox] { accent-color: #3b82f6; }
     <button class="flex flex-col items-center gap-1 p-2 text-slate-400 navbtn-m" data-tab="network"><i class="fa-solid fa-network-wired text-lg"></i><span class="text-[10px]">Rede</span></button>
   </div>
 
-  <main class="ml-0 lg:ml-64 min-h-screen flex-1 flex flex-col">
-    <header class="sticky top-0 z-20 flex h-[72px] items-center justify-between border-b border-slate-800 bg-slate-950/90 px-4 sm:px-6 backdrop-blur">
+  <main class="ml-0 lg:ml-64 min-h-screen flex-1 flex flex-col w-full">
+    <header class="sticky top-0 z-20 flex h-[72px] items-center justify-between border-b border-slate-800 bg-slate-950/90 px-4 sm:px-6 backdrop-blur w-full">
       <div>
         <p class="text-[10px] uppercase tracking-[.18em] text-blue-400">Central de operações</p>
         <h2 id="page-title" class="header-title text-base sm:text-lg font-semibold">Visão geral</h2>
@@ -132,7 +132,7 @@ input[type=checkbox] { accent-color: #3b82f6; }
       </div>
     </header>
 
-    <div class="content space-y-6 p-4 sm:p-6 lg:p-8 flex-1">
+    <div class="content space-y-6 p-4 sm:p-6 lg:p-8 flex-1 w-full max-w-full">
       <!-- DASHBOARD -->
       <section id="tab-dashboard" class="space-y-6">
         <div class="flex flex-wrap items-end justify-between gap-3">
