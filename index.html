@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIConnect | Gestão de TI</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+:root { color-scheme: dark; }
+* { scrollbar-width: thin; scrollbar-color: #334155 transparent; }
+body { background: #0b1120; color: #e2e8f0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+.panel { background: #111b2e; border: 1px solid #22304a; border-radius: 16px; }
+.field { width: 100%; background: #0b1324; border: 1px solid #2a3954; border-radius: 10px; padding: 10px 12px; color: #f8fafc; outline: none; }
+.field:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px #3b82f622; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 10px; padding: 9px 13px; font-size: 13px; font-weight: 600; transition: .15s; }
+.btn-primary { background: #2563eb; color: white; }
+.btn-primary:hover { background: #3b82f6; }
+.btn-muted { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
+.btn-muted:hover { background: #29384e; }
+.btn-danger { background: #7f1d1d; color: #fecaca; }
+.btn-danger:hover { background: #991b1b; }
+.navbtn { display: flex; width: 100%; align-items: center; gap: 12px; padding: 11px 13px; border-radius: 10px; color: #94a3b8; text-align: left; font-size: 13px; transition: .15s; }
+.navbtn:hover { background: #17243a; color: #fff; }
+.navbtn.active { background: #1d4ed8; color: #fff; box-shadow: 0 8px 22px #1d4ed833; }
+.table-wrap { overflow: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th { color: #94a3b8; text-transform: uppercase; font-size: 10px; letter-spacing: .07em; background: #0d1728; text-align: left; }
+.table th, .table td { padding: 13px 14px; border-bottom: 1px solid #22304a; white-space: nowrap; }
+.table tr:hover td { background: #ffffff05; }
+.badge { display: inline-flex; padding: 4px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #1e293b; color: #cbd5e1; }
+.badge-blue { background: #172554; color: #93c5fd; }
+.badge-green { background: #052e2b; color: #6ee7b7; }
+.badge-amber { background: #422006; color: #fcd34d; }
+.badge-red { background: #450a0a; color: #fca5a5; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 80; background: #020617bb; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal { width: min(620px, 100%); max-height: 90vh; overflow: auto; background: #111b2e; border: 1px solid #334155; border-radius: 18px; padding: 22px; box-shadow: 0 25px 80px #0008; }
+.hidden { display: none !important; }
+.kpi { background: linear-gradient(135deg, #121e33, #0e1728); border: 1px solid #25344d; border-radius: 15px; padding: 18px; }
+input[type=checkbox] { accent-color: #3b82f6; }
+@media(max-width: 800px) {
+  #sidebar { width: 72px !important; }
+  #sidebar .nav-label, #sidebar .brand-label, #sidebar .profile-label { display: none; }
+  #sidebar .navbtn { justify-content: center; padding: 13px 4px; }
+  #sidebar .navbtn i { font-size: 16px; }
+  #sidebar .brand { justify-content: center; padding: 16px 4px; }
+  #sidebar .profile { justify-content: center; }
+  main { min-width: 0; }
+  .content { padding: 16px !important; }
+  .header-title { font-size: 15px; }
+}
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- TELA DE LOGIN -->
+<div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-5" style="background: radial-gradient(circle at 50% 0%, #172d55 0, #0b1120 55%)">
+  <form id="login-form" class="panel w-full max-w-md p-8">
+    <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-2xl shadow-lg shadow-blue-900/60">
+      <i class="fa-solid fa-network-wired"></i>
+    </div>
+    <div class="text-center mb-7">
+      <h1 class="text-2xl font-bold tracking-tight">TI<span class="text-blue-400">Connect</span></h1>
+      <p class="text-sm text-slate-400 mt-2">Gestão de infraestrutura e serviços de TI</p>
+    </div>
+    <label class="block text-xs text-slate-300 mb-1.5">Nome de acesso</label>
+    <input id="login-user" class="field mb-4" value="Andrielle Souza" required>
+    
+    <label class="block text-xs text-slate-300 mb-1.5">Senha de demonstração</label>
+    <input id="login-pass" class="field mb-5" type="password" value="123456" required>
+    
+    <button class="btn btn-primary w-full py-3" type="submit">
+      <i class="fa-solid fa-right-to-bracket"></i> Entrar no sistema
+    </button>
+    <p class="text-xs text-slate-500 text-center mt-4">Protótipo local • Não use dados corporativos reais</p>
+  </form>
+</div>
+
+<!-- APLICAÇÃO PRINCIPAL -->
+<div id="app" class="hidden min-h-screen">
+  <aside id="sidebar" class="fixed left-0 top-0 z-30 flex h-screen w-64 flex-col border-r border-slate-800 bg-slate-950">
+    <div class="brand flex items-center gap-3 border-b border-slate-800 px-5 py-5">
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-lg">
+        <i class="fa-solid fa-network-wired"></i>
+      </div>
+      <div class="brand-label">
+        <div class="font-bold text-lg">TI<span class="text-blue-400">Connect</span></div>
+        <div class="text-xs text-slate-500">Infraestrutura inteligente</div>
+      </div>
+    </div>
+
+    <div class="px-3 pt-5 pb-2 text-[10px] font-bold uppercase tracking-[.18em] text-slate-600 nav-label">Workspace</div>
+    <nav class="space-y-1 px-3">
+      <button class="navbtn active" data-tab="dashboard"><i class="fa-solid fa-chart-pie w-5 text-center"></i><span class="nav-label">Visão geral</span></button>
+      <button class="navbtn" data-tab="tickets"><i class="fa-solid fa-headset w-5 text-center"></i><span class="nav-label">Chamados</span></button>
+      <button class="navbtn" data-tab="assets"><i class="fa-solid fa-laptop w-5 text-center"></i><span class="nav-label">Equipamentos</span></button>
+      <button class="navbtn" data-tab="network"><i class="fa-solid fa-diagram-project w-5 text-center"></i><span class="nav-label">Infraestrutura de rede</span></button>
+      <button class="navbtn" data-tab="printers"><i class="fa-solid fa-print w-5 text-center"></i><span class="nav-label">Impressoras</span></button>
+      <button class="navbtn" data-tab="stock"><i class="fa-solid fa-boxes-stacked w-5 text-center"></i><span class="nav-label">Estoque de materiais</span></button>
+      <button class="navbtn" data-tab="deliveries"><i class="fa-solid fa-file-signature w-5 text-center"></i><span class="nav-label">Entregas e cautelas</span></button>
+    </nav>
+
+    <div class="mt-auto border-t border-slate-800 p-4">
+      <div class="profile flex items-center gap-3">
+        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-bold">AS</div>
+        <div class="profile-label min-w-0">
+          <div id="profile-name" class="truncate text-sm font-semibold">Andrielle Souza</div>
+          <div class="text-xs text-slate-500">Gestão de TI</div>
+        </div>
+        <button id="logout-btn" class="ml-auto text-slate-500 hover:text-red-400" title="Sair"><i class="fa-solid fa-right-from-bracket"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="ml-64 min-h-screen">
+    <header class="sticky top-0 z-20 flex h-[72px] items-center justify-between border-b border-slate-800 bg-slate-950/90 px-6 backdrop-blur">
+      <div>
+        <p class="text-[10px] uppercase tracking-[.18em] text-blue-400">Central de operações</p>
+        <h2 id="page-title" class="header-title text-lg font-semibold">Visão geral</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="hidden text-xs text-slate-500 sm:inline">Ambiente de demonstração</span>
+        <button id="header-new" class="btn btn-primary"><i class="fa-solid fa-plus"></i><span class="hidden sm:inline">Novo registro</span></button>
+      </div>
+    </header>
+
+    <div class="content space-y-6 p-6 lg:p-8">
+      <!-- DASHBOARD -->
+      <section id="tab-dashboard" class="space-y-6">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h3 class="text-xl font-semibold">Olá, <span id="welcome-name">Andrielle</span> 👋</h3>
+            <p class="mt-1 text-sm text-slate-400">Resumo da operação de TI e atalhos para sua rotina.</p>
+          </div>
+          <button class="btn btn-muted" id="export-btn"><i class="fa-solid fa-file-export"></i> Exportar dados</button>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="kpi">
+            <div class="flex justify-between"><span class="text-sm text-slate-400">Chamados em aberto</span><span class="text-blue-400"><i class="fa-solid fa-headset"></i></span></div>
+            <div id="kpi-tickets" class="mt-3 text-3xl font-bold">0</div>
+            <div class="mt-2 text-xs text-slate-500">Solicitações que exigem atenção</div>
+          </div>
+          <div class="kpi">
+            <div class="flex justify-between"><span class="text-sm text-slate-400">Equipamentos cadastrados</span><span class="text-violet-400"><i class="fa-solid fa-laptop"></i></span></div>
+            <div id="kpi-assets" class="mt-3 text-3xl font-bold">0</div>
+            <div class="mt-2 text-xs text-slate-500">Ativos registrados no inventário</div>
+          </div>
+          <div class="kpi">
+            <div class="flex justify-between"><span class="text-sm text-slate-400">Itens de rede</span><span class="text-cyan-400"><i class="fa-solid fa-network-wired"></i></span></div>
+            <div id="kpi-network" class="mt-3 text-3xl font-bold">0</div>
+            <div class="mt-2 text-xs text-slate-500">Pontos, portas e equipamentos</div>
+          </div>
+          <div class="kpi">
+            <div class="flex justify-between"><span class="text-sm text-slate-400">Entregas registradas</span><span class="text-emerald-400"><i class="fa-solid fa-file-signature"></i></span></div>
+            <div id="kpi-deliveries" class="mt-3 text-3xl font-bold">0</div>
+            <div class="mt-2 text-xs text-slate-500">Histórico de cautelas</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 xl:grid-cols-3">
+          <div class="panel p-5 xl:col-span-2">
+            <div class="mb-4 flex items-center justify-between">
+              <div>
+                <h3 class="font-semibold">Chamados recentes</h3>
+                <p class="text-xs text-slate-500 mt-1">Acompanhe os atendimentos em andamento</p>
+              </div>
+              <button class="text-xs text-blue-400 hover:text-blue-300" data-goto="tickets">Ver todos <i class="fa-solid fa-arrow-right ml-1"></i></button>
+            </div>
+            <div id="recent-tickets" class="space-y-2"></div>
+          </div>
+
+          <div class="panel p-5">
+            <h3 class="font-semibold">Acesso rápido</h3>
+            <p class="mt-1 mb-4 text-xs text-slate-500">Cadastre ou registre uma atividade</p>
+            <div class="space-y-2">
+              <button class="btn btn-muted w-full justify-start" data-action="ticket"><i class="fa-solid fa-circle-plus w-5 text-blue-400"></i>Novo chamado</button>
+              <button class="btn btn-muted w-full justify-start" data-action="asset"><i class="fa-solid fa-laptop w-5 text-violet-400"></i>Cadastrar equipamento</button>
+              <button class="btn btn-muted w-full justify-start" data-action="network"><i class="fa-solid fa-ethernet w-5 text-cyan-400"></i>Mapear ponto de rede</button>
+              <button class="btn btn-muted w-full justify-start" data-action="printer"><i class="fa-solid fa-print w-5 text-emerald-400"></i>Cadastrar impressora</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHAMADOS -->
+      <section id="tab-tickets" class="hidden space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div><h3 class="text-xl font-semibold">Gestão de chamados</h3><p class="mt-1 text-sm text-slate-400">Cadastre, atualize o status e documente a solução.</p></div>
+          <button class="btn btn-primary" data-action="ticket"><i class="fa-solid fa-plus"></i>Novo chamado</button>
+        </div>
+        <div class="panel p-4 flex flex-wrap gap-3">
+          <input id="ticket-search" class="field min-w-[220px] flex-1" placeholder="Buscar por ID, título, colaborador...">
+          <select id="ticket-status-filter" class="field w-auto min-w-[160px]">
+            <option value="">Todos os status</option>
+            <option>Novo</option>
+            <option>Em análise</option>
+            <option>Aguardando</option>
+            <option>Concluído</option>
+          </select>
+        </div>
+        <div class="panel table-wrap">
+          <table class="table">
+            <thead><tr><th>ID</th><th>Solicitação</th><th>Colaborador</th><th>Responsável</th><th>Prioridade</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="tickets-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- EQUIPAMENTOS -->
+      <section id="tab-assets" class="hidden space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div><h3 class="text-xl font-semibold">Inventário de equipamentos</h3><p class="mt-1 text-sm text-slate-400">Controle computadores, monitores, celulares e periféricos.</p></div>
+          <button class="btn btn-primary" data-action="asset"><i class="fa-solid fa-plus"></i> Cadastrar equipamento</button>
+        </div>
+        <div class="panel p-4"><input id="asset-search" class="field" placeholder="Buscar por patrimônio, tipo, modelo, colaborador ou local..."></div>
+        <div class="panel table-wrap">
+          <table class="table">
+            <thead><tr><th>Patrimônio / ID</th><th>Tipo</th><th>Modelo</th><th>Localização</th><th>Responsável</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="assets-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- REDE -->
+      <section id="tab-network" class="hidden space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div><h3 class="text-xl font-semibold">Infraestrutura de rede</h3><p class="mt-1 text-sm text-slate-400">Documente pontos físicos, racks, switches, portas e VLANs.</p></div>
+          <button class="btn btn-primary" data-action="network"><i class="fa-solid fa-plus"></i> Vincular ponto</button>
+        </div>
+        <div class="panel p-4"><input id="network-search" class="field" placeholder="Buscar por local, rack, switch, porta, IP ou VLAN..."></div>
+        <div class="panel table-wrap">
+          <table class="table">
+            <thead><tr><th>Local / ponto</th><th>Rack / patch panel</th><th>Switch / porta</th><th>VLAN</th><th>IP / MAC</th><th>Ações</th></tr></thead>
+            <tbody id="network-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- IMPRESSORAS (GUIA EXCLUSIVA) -->
+      <section id="tab-printers" class="hidden space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div><h3 class="text-xl font-semibold">Gestão de impressoras</h3><p class="mt-1 text-sm text-slate-400">Acompanhe impressoras de rede e acesse o painel web por IP.</p></div>
+          <button class="btn btn-primary" data-action="printer"><i class="fa-solid fa-plus"></i> Cadastrar impressora</button>
+        </div>
+        <div class="panel p-4"><input id="printer-search" class="field" placeholder="Buscar impressora por nome, série, IP ou local..."></div>
+        <div class="panel table-wrap">
+          <table class="table">
+            <thead><tr><th>Identificação</th><th>Número de série</th><th>IP</th><th>Localização</th><th>Estoque toner (un.)</th><th>Ações</th></tr></thead>
+            <tbody id="printers-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ESTOQUE DE MATERIAIS (GUIA EXCLUSIVA) -->
+      <section id="tab-stock" class="hidden space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div><h3 class="text-xl font-semibold">Estoque de materiais</h3><p class="mt-1 text-sm text-slate-400">Cabos, fontes, adaptadores, headsets e periféricos disponíveis.</p></div>
+          <button class="btn btn-primary" data-action="stock"><i class="fa-solid fa-plus"></i> Novo item de estoque</button>
+        </div>
+        <div class="panel p-4"><input id="stock-search" class="field" placeholder="Buscar material no estoque..."></div>
+        <div class="panel table-wrap">
+          <table class="table">
+            <thead><tr><th>Material</th><th>Quantidade</th><th>Estoque mínimo</th><th>Local</th><th>Ações</th></tr></thead>
+            <tbody id="stock-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ENTREGAS E CAUTELAS -->
+      <section id="tab-deliveries" class="hidden space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div><h3 class="text-xl font-semibold">Entregas e termos de cautela</h3><p class="mt-1 text-sm text-slate-400">Registre equipamentos entregues aos colaboradores.</p></div>
+          <button class="btn btn-primary" data-action="delivery"><i class="fa-solid fa-file-signature"></i> Registrar entrega</button>
+        </div>
+        <div class="panel p-4"><input id="delivery-search" class="field" placeholder="Buscar por colaborador, equipamento ou termo..."></div>
+        <div class="panel table-wrap">
+          <table class="table">
+            <thead><tr><th>Colaborador</th><th>Departamento</th><th>Equipamento</th><th>Patrimônio / série</th><th>Data</th><th>Termo</th><th>Ações</th></tr></thead>
+            <tbody id="deliveries-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="border-t border-slate-800 pt-4 text-xs text-slate-600">TIConnect • Protótipo local para testes e evolução</footer>
+    </div>
+  </main>
+</div>
+
+<div id="modal-root" class="hidden"></div>
+<div id="toast" class="fixed bottom-5 right-5 z-[100] hidden rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm shadow-2xl"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = 'ticonnect-prototype-v1';
+
+const initial = {
+  tickets: [
+    { id: 1001, title: 'Microfone não funciona', requester: 'Colaborador de teste', assignee: 'Andrielle', priority: 'Alta', status: 'Em análise', description: 'Verificar entrada e permissões de áudio.', created: new Date().toISOString().slice(0,10), solution: '' },
+    { id: 1002, title: 'Instalação de equipamento', requester: 'Pessoa de teste', assignee: 'Equipe de TI', priority: 'Normal', status: 'Novo', description: 'Preparar estação de trabalho.', created: new Date().toISOString().slice(0,10), solution: '' }
+  ],
+  assets: [{ id: 1, tag: 'PAT-0001', type: 'Notebook', model: 'Dell Latitude (exemplo)', location: 'Matriz / TI', owner: 'Estoque de TI', status: 'Em estoque' }],
+  network: [{ id: 1, point: 'Sala de teste - Ponto A1', rack: 'Rack 01 / PP 01', switch: 'SW-TESTE-01', port: 'Gi1/0/1', vlan: '10', ip: '192.0.2.10', mac: '00:00:00:00:00:01' }],
+  printers: [
+    { region: 'REGIÃO: CONTINENTE' },
+    { id: 1, name: 'CO_ADM_PB_01', serial: 'BRBSS9H02K', ip: '192.168.40.66', location: 'Continente', toner: 1 },
+    { id: 2, name: 'CO_ADM_PB_02', serial: 'BRBSO1FF4Y', ip: '192.168.40.247', location: 'Continente', toner: 1 },
+    { id: 3, name: 'CO_COM_PB_01', serial: 'BRBSNCRN33', ip: '192.168.40.70', location: 'Continente', toner: 1 },
+    { id: 4, name: 'CO_COND_PB_01', serial: 'BRBSN9JKF4', ip: '192.168.80.238', location: 'Continente', toner: 1 },
+    { id: 5, name: 'CO_CPD_PB_01 (iR C3025)', serial: 'WVS02059', ip: '192.168.30.234', location: 'Continente / CPD', toner: 1 },
+    { id: 6, name: 'CO_DES_PB_01', serial: 'BRBSO1FDX7', ip: '192.168.20.62', location: 'Continente', toner: 1 },
+    { id: 7, name: 'CO_DIR_PB_01', serial: 'BRBSN9FFW1', ip: '192.168.70.141', location: 'Continente', toner: 1 },
+    { id: 8, name: 'CO_FIN_PB_01', serial: 'BRBSR2Q18H', ip: '192.168.40.85', location: 'Continente', toner: 1 },
+    { id: 9, name: 'CO_GERFIN_PB_01', serial: 'BRBSR2Q16N', ip: '192.168.10.159', location: 'Continente', toner: 1 },
+    { id: 10, name: 'CO_JUR_PB_01', serial: 'BRBSO1FF4B', ip: '192.168.60.221', location: 'Continente', toner: 1 },
+    { id: 11, name: 'CO_LOC_CL_01', serial: 'X3C3000328', ip: '192.168.50.232', location: 'Continente', toner: 1 },
+    { id: 12, name: 'CO_LOC_PB_01', serial: 'BRBSO1FDWQ', ip: '192.168.70.77', location: 'Continente', toner: 1 },
+    { id: 13, name: 'CO_MAN_PB_01', serial: 'BRBSNDNBCN', ip: '192.168.70.57', location: 'Continente', toner: 1 },
+    { id: 14, name: 'CO_NEG_PB_01', serial: 'BRBSQ5TON5', ip: '192.168.80.225', location: 'Continente', toner: 1 },
+    { id: 15, name: 'CO_RH_PB_01', serial: 'BRBSNCRN7R', ip: '192.168.80.223', location: 'Continente', toner: 1 },
+    { id: 16, name: 'CO_TES_PB_01', serial: 'BRBSO1FFBF', ip: '192.168.50.236', location: 'Continente', toner: 1 },
+    { id: 17, name: 'CO_VIS_PB_01', serial: 'BRBSN9JK1S', ip: '192.168.60.218', location: 'Continente', toner: 1 },
+    { id: 18, name: 'CO_REC_CL', serial: 'X3B7001215', ip: '192.168.20.186', location: 'Continente', toner: 1 },
+    { id: 19, name: 'Gerj (Lauro)', serial: 'X3B7012718', ip: '192.168.50.237', location: 'Continente', toner: 1 },
+    { id: 20, name: 'CO_VALC_PB_01', serial: 'BRBSQ691CV', ip: '192.168.80.50', location: 'Continente', toner: 1 },
+
+    { region: 'REGIÃO: KOBRASOL' },
+    { id: 21, name: 'KO_ADM_CL_01', serial: 'X3C3000532', ip: '172.16.21.199', location: 'Kobrasol', toner: 1 },
+    { id: 22, name: 'KO_LOC_PB_01', serial: 'BRBSNDNBCW', ip: '172.16.21.172', location: 'Kobrasol', toner: 1 },
+    { id: 23, name: 'CO_DES_PB_02', serial: 'BRBSO1FFCM', ip: '172.16.21.66', location: 'Kobrasol', toner: 1 },
+
+    { region: 'REGIÃO: PALHOÇA' },
+    { id: 24, name: 'PA_ADM_CL_01', serial: 'X3C3000462', ip: '172.16.22.218', location: 'Palhoça', toner: 1 },
+    { id: 25, name: 'PA_LOC_PB_01', serial: 'BRBSNDNBFN', ip: '172.16.22.212', location: 'Palhoça', toner: 1 },
+    { id: 26, name: 'PA_DES_PB_01', serial: 'BRBST2ROK4', ip: '172.16.22.230', location: 'Palhoça', toner: 1 },
+
+    { region: 'REGIÃO: TRINDADE' },
+    { id: 27, name: 'TRI_ADM_CL_01', serial: 'X3B7016907', ip: '172.16.23.161', location: 'Trindade', toner: 1 },
+    { id: 28, name: 'TRI_LOC_PB_01', serial: 'BRBSS430H3', ip: '172.16.23.205', location: 'Trindade', toner: 1 },
+
+    { region: 'REGIÃO: CENTRO' },
+    { id: 29, name: 'CE_ADM_CL_01', serial: 'X3C3000443', ip: '172.16.20.105', location: 'Centro', toner: 1 },
+    { id: 30, name: 'CE_DES_PB_01', serial: 'BRBSS4POM3', ip: '172.16.20.9', location: 'Centro', toner: 1 },
+    { id: 31, name: 'CE_LOC_PB_01', serial: 'BRBSSNDPBN4', ip: '172.16.20.70', location: 'Centro', toner: 1 },
+
+    { region: 'REGIÃO: SUL DA ILHA' },
+    { id: 32, name: 'SU_COM_CL', serial: 'X3B7030027', ip: '172.16.24.151', location: 'Sul da Ilha', toner: 1 },
+    { id: 33, name: 'SU_LOC_PB', serial: 'BRBSR3H09K', ip: '172.16.24.150', location: 'Sul da Ilha', toner: 1 },
+
+    { region: 'REGIÃO: BIGUAÇU' },
+    { id: 34, name: 'BI_ADM_CL_01', serial: 'X3B7029941', ip: '172.16.25.64', location: 'Biguaçu', toner: 1 },
+    { id: 35, name: 'BI_LOC_PB_01', serial: 'BRBSR160CB', ip: '172.16.25.63', location: 'Biguaçu', toner: 1 },
+    { id: 36, name: 'BI_DES_PB_01', serial: 'BRBSR160BW', ip: '172.16.26.64', location: 'Biguaçu', toner: 1 },
+
+    { region: 'REGIÃO: NORTE DA ILHA' },
+    { id: 37, name: 'NO_ADM_CL_01', serial: 'XBJZ021428', ip: '172.16.26.63', location: 'Norte da Ilha', toner: 1 },
+    { id: 38, name: 'NO_LOC_PB_01', serial: 'BRBSS6SOBS', ip: '172.16.26.62', location: 'Norte da Ilha', toner: 1 }
+  ],
+  stock: [{ id: 1, name: 'Cabo de rede (exemplo)', qty: 5, min: 2, location: 'Armário de TI' }],
+  deliveries: []
+};
+
+let db = loadDB();
+let currentTab = 'dashboard';
+let nextTicket = Math.max(1000, ...db.tickets.map(x => Number(x.id) || 0)) + 1;
+let toastTimer;
+
+function loadDB() {
+  try {
+    const v = JSON.parse(localStorage.getItem(STORE));
+    return v && v.tickets ? { ...structuredClone(initial), ...v } : structuredClone(initial);
+  } catch {
+    return structuredClone(initial);
+  }
+}
+
+function saveDB() {
+  localStorage.setItem(STORE, JSON.stringify(db));
+  renderAll();
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function toast(msg) {
+  $('toast').textContent = msg;
+  $('toast').classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $('toast').classList.add('hidden'), 2800);
+}
+
+function statusBadge(s) {
+  let c = s === 'Concluído' || s === 'Assinado' ? 'badge-green' : s === 'Aguardando' ? 'badge-amber' : s === 'Em análise' ? 'badge-blue' : s === 'Novo' ? 'badge-red' : 'badge';
+  return `<span class="badge ${c}">${esc(s)}</span>`;
+}
+
+function emptyRow(n, msg = 'Nenhum registro encontrado.') {
+  return `<tr><td colspan="${n}" class="py-10 text-center text-slate-500">${msg}</td></tr>`;
+}
+
+function go(tab) {
+  currentTab = tab;
+  document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+  $('tab-' + tab).classList.remove('hidden');
+  document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  
+  const titles = {
+    dashboard: 'Visão geral',
+    tickets: 'Chamados',
+    assets: 'Equipamentos',
+    network: 'Infraestrutura de rede',
+    printers: 'Gestão de impressoras',
+    stock: 'Estoque de materiais',
+    deliveries: 'Entregas e cautelas'
+  };
+  
+  $('page-title').textContent = titles[tab];
+  $('header-new').innerHTML = '<i class="fa-solid fa-plus"></i><span class="hidden sm:inline">Novo registro</span>';
+  renderAll();
+}
+
+function openAction(type, id = null) {
+  const forms = {
+    ticket: {
+      title: id ? 'Editar chamado' : 'Novo chamado',
+      fields: [
+        ['title', 'Título da solicitação', 'text', true],
+        ['requester', 'Colaborador solicitante', 'text', true],
+        ['assignee', 'Responsável pelo atendimento', 'text', false],
+        ['priority', 'Prioridade', 'select', true, ['Baixa', 'Normal', 'Alta', 'Urgente']],
+        ['status', 'Status', 'select', true, ['Novo', 'Em análise', 'Aguardando', 'Concluído']],
+        ['description', 'Descrição / diagnóstico', 'textarea', false],
+        ['solution', 'Solução aplicada / observações', 'textarea', false]
+      ]
+    },
+    asset: {
+      title: id ? 'Editar equipamento' : 'Cadastrar equipamento',
+      fields: [
+        ['tag', 'Patrimônio / identificador', 'text', true],
+        ['type', 'Tipo de equipamento', 'select', true, ['Notebook', 'Desktop', 'Monitor', 'Celular', 'Headset', 'Teclado', 'Mouse', 'Dock station', 'Outro']],
+        ['model', 'Marca / modelo', 'text', true],
+        ['location', 'Localização', 'text', true],
+        ['owner', 'Colaborador / responsável', 'text', false],
+        ['status', 'Status', 'select', true, ['Em estoque', 'Em uso', 'Em manutenção', 'Baixado']]
+      ]
+    },
+    network: {
+      title: id ? 'Editar ponto de rede' : 'Vincular ponto de rede',
+      fields: [
+        ['point', 'Localização / tomada', 'text', true],
+        ['rack', 'Rack / patch panel', 'text', false],
+        ['switch', 'Switch', 'text', true],
+        ['port', 'Porta do switch', 'text', true],
+        ['vlan', 'VLAN', 'text', false],
+        ['ip', 'Endereço IP', 'text', false],
+        ['mac', 'Endereço MAC', 'text', false]
+      ]
+    },
+    printer: {
+      title: id ? 'Editar impressora' : 'Cadastrar impressora',
+      fields: [
+        ['name', 'Identificação / setor', 'text', true],
+        ['serial', 'Número de série', 'text', true],
+        ['ip', 'Endereço IP', 'text', true],
+        ['location', 'Localização', 'text', true],
+        ['toner', 'Toner disponível (unidades)', 'number', false]
+      ]
+    },
+    stock: {
+      title: id ? 'Editar item de estoque' : 'Cadastrar item de estoque',
+      fields: [
+        ['name', 'Nome do material', 'text', true],
+        ['qty', 'Quantidade disponível', 'number', true],
+        ['min', 'Estoque mínimo', 'number', true],
+        ['location', 'Local de armazenamento', 'text', false]
+      ]
+    },
+    delivery: {
+      title: id ? 'Editar entrega' : 'Registrar entrega de equipamento',
+      fields: [
+        ['person', 'Colaborador', 'text', true],
+        ['department', 'Departamento', 'text', true],
+        ['equipment', 'Equipamento entregue', 'text', true],
+        ['tag', 'Patrimônio / número de série', 'text', true],
+        ['date', 'Data da entrega', 'date', true],
+        ['term', 'Situação do termo', 'select', true, ['Pendente', 'Enviado para assinatura', 'Assinado']]
+      ]
+    }
+  };
+
+  const form = forms[type];
+  if (!form) return;
+
+  const list = db[type === 'ticket' ? 'tickets' : type === 'asset' ? 'assets' : type === 'network' ? 'network' : type === 'printer' ? 'printers' : type === 'stock' ? 'stock' : 'deliveries'];
+  const item = id ? list.find(x => x.id === id) : {};
+  if (id && !item) { toast('Registro não encontrado.'); return; }
+
+  const fields = form.fields.map(([key, label, kind, required, opts]) => {
+    let value = item[key] ?? (key === 'status' ? 'Novo' : key === 'priority' ? 'Normal' : key === 'date' ? new Date().toISOString().slice(0, 10) : key === 'toner' || key === 'qty' || key === 'min' ? 0 : '');
+    let control = kind === 'select' ? 
+      `<select class="field" name="${key}" ${required ? 'required' : ''}>${opts.map(o => `<option ${String(value) === o ? 'selected' : ''}>${o}</option>`).join('')}</select>` : 
+      kind === 'textarea' ? 
+      `<textarea class="field min-h-24" name="${key}">${esc(value)}</textarea>` : 
+      `<input class="field" name="${key}" type="${kind}" value="${esc(value)}" ${required ? 'required' : ''} ${kind === 'number' ? 'min="0"' : ''}>`;
+    
+    return `<label class="block text-xs text-slate-300">${label}${required ? ' *' : ''}<div class="mt-1.5">${control}</div></label>`;
+  }).join('');
+
+  $('modal-root').innerHTML = `
+    <div class="modal-backdrop" id="modal-backdrop">
+      <div class="modal">
+        <div class="mb-5 flex items-center justify-between">
+          <div><h3 class="text-lg font-semibold">${form.title}</h3><p class="mt-1 text-xs text-slate-500">Campos com * são obrigatórios.</p></div>
+          <button type="button" class="btn btn-muted" data-close-modal aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="record-form" data-type="${type}" data-id="${id ?? ''}">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">${fields}</div>
+          <div class="mt-6 flex justify-end gap-2 border-t border-slate-800 pt-4">
+            <button type="button" class="btn btn-muted" data-close-modal>Cancelar</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar registro</button>
+          </div>
+        </form>
+      </div>
+    </div>`;
+  $('modal-root').classList.remove('hidden');
+  $('modal-backdrop').addEventListener('click', e => { if (e.target.id === 'modal-backdrop') closeModal(); });
+}
+
+function closeModal() {
+  $('modal-root').classList.add('hidden');
+  $('modal-root').innerHTML = '';
+}
+
+function deleteRecord(type, id) {
+  if (!confirm('Tem certeza de que deseja excluir este registro? Esta ação não pode ser desfeita.')) return;
+  const key = { ticket: 'tickets', asset: 'assets', network: 'network', printer: 'printers', stock: 'stock', delivery: 'deliveries' }[type];
+  db[key] = db[key].filter(x => x.id !== id);
+  saveDB();
+  toast('Registro excluído.');
+}
+
+function actionButtons(type, id) {
+  return `<div class="flex items-center gap-1"><button class="btn btn-muted !px-2 !py-1.5" data-edit="${type}:${id}" title="Editar"><i class="fa-solid fa-pen"></i></button><button class="btn btn-danger !px-2 !py-1.5" data-delete="${type}:${id}" title="Excluir"><i class="fa-solid fa-trash"></i></button></div>`;
+}
+
+function renderAll() {
+  renderDashboard();
+  renderTickets();
+  renderAssets();
+  renderNetwork();
+  renderPrinters();
+  renderStock();
+  renderDeliveries();
+}
+
+function renderDashboard() {
+  $('kpi-tickets').textContent = db.tickets.filter(x => x.status !== 'Concluído').length;
+  $('kpi-assets').textContent = db.assets.length;
+  $('kpi-network').textContent = db.network.length;
+  $('kpi-deliveries').textContent = db.deliveries.length;
+  
+  const items = [...db.tickets].sort((a, b) => String(b.created).localeCompare(String(a.created))).slice(0, 5);
+  $('recent-tickets').innerHTML = items.length ? items.map(t => `
+    <button class="flex w-full items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 p-3 text-left hover:border-slate-600" data-edit="ticket:${t.id}">
+      <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-950 text-blue-400"><i class="fa-solid fa-headset"></i></span>
+      <span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium">${esc(t.title)}</span><span class="mt-1 block text-xs text-slate-500">#${t.id} · ${esc(t.requester)}</span></span>
+      ${statusBadge(t.status)}
+    </button>`).join('') : '<p class="py-8 text-center text-sm text-slate-500">Nenhum chamado cadastrado.</p>';
+}
+
+function renderTickets() {
+  let q = ($('ticket-search')?.value || '').toLowerCase();
+  let st = $('ticket-status-filter')?.value || '';
+  let rows = db.tickets.filter(t => (!st || t.status === st) && [t.id, t.title, t.requester, t.assignee, t.description].join(' ').toLowerCase().includes(q));
+  
+  $('tickets-table').innerHTML = rows.length ? rows.map(t => `
+    <tr>
+      <td class="font-mono text-blue-300">#${t.id}</td>
+      <td><div class="font-medium">${esc(t.title)}</div><div class="mt-1 max-w-xs truncate text-xs text-slate-500">${esc(t.description)}</div></td>
+      <td>${esc(t.requester)}</td>
+      <td>${esc(t.assignee || '—')}</td>
+      <td>${statusBadge(t.priority)}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td>${actionButtons('ticket', t.id)}</td>
+    </tr>`).join('') : emptyRow(7);
+}
+
+function renderAssets() {
+  let q = ($('asset-search')?.value || '').toLowerCase();
+  let rows = db.assets.filter(x => Object.values(x).join(' ').toLowerCase().includes(q));
+  
+  $('assets-table').innerHTML = rows.length ? rows.map(x => `
+    <tr>
+      <td class="font-mono text-blue-300">${esc(x.tag)}</td>
+      <td>${esc(x.type)}</td>
+      <td>${esc(x.model)}</td>
+      <td>${esc(x.location)}</td>
+      <td>${esc(x.owner || '—')}</td>
+      <td>${statusBadge(x.status)}</td>
+      <td>${actionButtons('asset', x.id)}</td>
+    </tr>`).join('') : emptyRow(7);
+}
+
+function renderNetwork() {
+  let q = ($('network-search')?.value || '').toLowerCase();
+  let rows = db.network.filter(x => Object.values(x).join(' ').toLowerCase().includes(q));
+  
+  $('network-table').innerHTML = rows.length ? rows.map(x => `
+    <tr>
+      <td class="font-medium">${esc(x.point)}</td>
+      <td>${esc(x.rack || '—')}</td>
+      <td><div>${esc(x.switch)}</div><div class="mt-1 font-mono text-xs text-cyan-400">${esc(x.port)}</div></td>
+      <td>${esc(x.vlan || '—')}</td>
+      <td><div class="font-mono">${esc(x.ip || '—')}</div><div class="mt-1 font-mono text-xs text-slate-500">${esc(x.mac || '—')}</div></td>
+      <td>${actionButtons('network', x.id)}</td>
+    </tr>`).join('') : emptyRow(6);
+}
+
+function renderPrinters() {
+  let q = ($('printer-search')?.value || '').toLowerCase();
+  let rows = db.printers.filter(x => x.region || Object.values(x).join(' ').toLowerCase().includes(q));
+  
+  $('printers-table').innerHTML = rows.length ? rows.map(x => {
+    if (x.region) {
+      return `<tr><td colspan="6" class="bg-slate-900/80 font-bold text-blue-400 text-xs">${esc(x.region)}</td></tr>`;
+    }
+    return `
+      <tr>
+        <td class="font-medium">${esc(x.name)}</td>
+        <td class="font-mono text-slate-400">${esc(x.serial)}</td>
+        <td class="font-mono text-emerald-300">${esc(x.ip)}</td>
+        <td>${esc(x.location)}</td>
+        <td>${Number(x.toner) || 0}</td>
+        <td><div class="flex gap-1"><button class="btn btn-muted !px-2 !py-1.5" data-open-ip="${esc(x.ip)}" title="Abrir IP Web"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>${actionButtons('printer', x.id)}</div></td>
+      </tr>`;
+  }).join('') : emptyRow(6);
+}
+
+function renderStock() {
+  let q = ($('stock-search')?.value || '').toLowerCase();
+  let rows = db.stock.filter(x => Object.values(x).join(' ').toLowerCase().includes(q));
+  
+  $('stock-table').innerHTML = rows.length ? rows.map(x => `
+    <tr>
+      <td class="font-medium">${esc(x.name)}</td>
+      <td>${Number(x.qty)} ${Number(x.qty) <= Number(x.min) ? '<span class="badge badge-amber ml-2">Repor</span>' : ''}</td>
+      <td>${Number(x.min)}</td>
+      <td>${esc(x.location || '—')}</td>
+      <td>${actionButtons('stock', x.id)}</td>
+    </tr>`).join('') : emptyRow(5);
+}
+
+function renderDeliveries() {
+  let q = ($('delivery-search')?.value || '').toLowerCase();
+  let rows = db.deliveries.filter(x => Object.values(x).join(' ').toLowerCase().includes(q));
+  
+  $('deliveries-table').innerHTML = rows.length ? rows.map(x => `
+    <tr>
+      <td class="font-medium">${esc(x.person)}</td>
+      <td>${esc(x.department)}</td>
+      <td>${esc(x.equipment)}</td>
+      <td class="font-mono">${esc(x.tag)}</td>
+      <td>${esc(x.date)}</td>
+      <td>${statusBadge(x.term)}</td>
+      <td>${actionButtons('delivery', x.id)}</td>
+    </tr>`).join('') : emptyRow(7);
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ticonnect-backup.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup exportado.');
+}
+
+document.addEventListener('click', e => {
+  const nav = e.target.closest('[data-tab]');
+  if (nav) { go(nav.dataset.tab); return; }
+  
+  const goto = e.target.closest('[data-goto]');
+  if (goto) { go(goto.dataset.goto); return; }
+  
+  const act = e.target.closest('[data-action]');
+  if (act) { openAction(act.dataset.action); return; }
+  
+  const close = e.target.closest('[data-close-modal]');
+  if (close) { closeModal(); return; }
+  
+  const edit = e.target.closest('[data-edit]');
+  if (edit) {
+    const [type, id] = edit.dataset.edit.split(':');
+    openAction(type, Number(id));
+    return;
+  }
+  
+  const del = e.target.closest('[data-delete]');
+  if (del) {
+    const [type, id] = del.dataset.delete.split(':');
+    deleteRecord(type, Number(id));
+    return;
+  }
+  
+  // Abertura direta do IP sem confirmação
+  const ip = e.target.closest('[data-open-ip]');
+  if (ip) {
+    const v = ip.dataset.openIp;
+    if (/^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)$/.test(v)) {
+      window.open('http://' + v, '_blank', 'noopener');
+    } else {
+      toast('Endereço IP inválido.');
+    }
+    return;
+  }
+});
+
+document.addEventListener('submit', e => {
+  if (e.target.id !== 'record-form') return;
+  e.preventDefault();
+  
+  const f = e.target;
+  const type = f.dataset.type;
+  const id = f.dataset.id ? Number(f.dataset.id) : null;
+  const values = Object.fromEntries(new FormData(f).entries());
+  
+  ['toner', 'qty', 'min'].forEach(k => {
+    if (k in values) values[k] = Number(values[k] || 0);
+  });
+  
+  const key = { ticket: 'tickets', asset: 'assets', network: 'network', printer: 'printers', stock: 'stock', delivery: 'deliveries' }[type];
+  
+  if (type === 'ticket' && !id) values.id = nextTicket++;
+  else if (!id) values.id = Math.max(0, ...db[key].map(x => Number(x.id) || 0)) + 1;
+  else values.id = id;
+  
+  if (type === 'ticket' && !id) values.created = new Date().toISOString().slice(0, 10);
+  
+  if (id) {
+    const ix = db[key].findIndex(x => x.id === id);
+    if (ix >= 0) db[key][ix] = { ...db[key][ix], ...values };
+    else db[key].push(values);
+  } else {
+    db[key].push(values);
+  }
+  
+  saveDB();
+  closeModal();
+  toast(id ? 'Registro atualizado com sucesso.' : 'Registro cadastrado com sucesso.');
+});
+
+$('login-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = $('login-user').value.trim() || 'Usuário';
+  $('profile-name').textContent = name;
+  $('welcome-name').textContent = name.split(' ')[0];
+  $('login-screen').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  go('dashboard');
+  toast('Bem-vinda ao TIConnect!');
+});
+
+$('logout-btn').addEventListener('click', () => {
+  if (confirm('Deseja sair do TIConnect?')) {
+    $('app').classList.add('hidden');
+    $('login-screen').classList.remove('hidden');
+  }
+});
+
+$('header-new').addEventListener('click', () => {
+  const types = { dashboard: 'ticket', tickets: 'ticket', assets: 'asset', network: 'network', printers: 'printer', stock: 'stock', deliveries: 'delivery' };
+  openAction(types[currentTab] || 'ticket');
+});
+
+$('export-btn').addEventListener('click', exportData);
+
+['ticket-search', 'ticket-status-filter'].forEach(id => $(id).addEventListener('input', renderTickets));
+['asset-search'].forEach(id => $(id).addEventListener('input', renderAssets));
+['network-search'].forEach(id => $(id).addEventListener('input', renderNetwork));
+['printer-search'].forEach(id => $(id).addEventListener('input', renderPrinters));
+['stock-search'].forEach(id => $(id).addEventListener('input', renderStock));
+['delivery-search'].forEach(id => $(id).addEventListener('input', renderDeliveries));
+
+window.addEventListener('storage', e => {
+  if (e.key === STORE) {
+    db = loadDB();
+    renderAll();
+  }
+});
+
+renderAll();
+</script>
+</body>
+</html>
