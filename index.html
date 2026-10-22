@@ -39,7 +39,30 @@ body { background: #0b1120; color: #e2e8f0; font-family: Inter, ui-sans-serif, s
 .kpi { background: linear-gradient(135deg, #121e33, #0e1728); border: 1px solid #25344d; border-radius: 15px; padding: 18px; }
 input[type=checkbox] { accent-color: #3b82f6; }
 
-/* CORREÇÃO DE LAYOUT RESPONSIVO (DESKTOP E MOBILE) */
+/* ESTILOS DOS POST-ITS */
+.note-card {
+  border-radius: 14px;
+  padding: 18px;
+  transition: transform .15s ease, box-shadow .15s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+  position: relative;
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+}
+.note-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px -5px rgba(0,0,0,0.4);
+}
+.note-yellow { background: #fef08a; color: #422006; border: 1px solid #fde047; }
+.note-blue { background: #bae6fd; color: #082f49; border: 1px solid #7dd3fc; }
+.note-green { background: #bbf7d0; color: #052e16; border: 1px solid #86efac; }
+.note-pink { background: #fbcfe8; color: #500724; border: 1px solid #f472b6; }
+.note-purple { background: #e9d5ff; color: #3b0764; border: 1px solid #d8b4fe; }
+
+/* LAYOUT RESPONSIVO */
 #mobile-nav { display: none; }
 
 @media(min-width: 1025px) {
@@ -58,27 +81,63 @@ input[type=checkbox] { accent-color: #3b82f6; }
 </head>
 <body class="min-h-screen">
 
-<!-- TELA DE LOGIN -->
-<div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-5" style="background: radial-gradient(circle at 50% 0%, #172d55 0, #0b1120 55%)">
-  <form id="login-form" class="panel w-full max-w-md p-6 sm:p-8">
-    <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-2xl shadow-lg shadow-blue-900/60">
+<!-- TELA DE LOGIN / CADASTRO -->
+<div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-5" style="background: radial-gradient(circle at 50% 0%, #172d55 0, #0b1120 55%)">
+  <div class="panel w-full max-w-md p-6 sm:p-8">
+    <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-2xl shadow-lg shadow-blue-900/60 text-white">
       <i class="fa-solid fa-network-wired"></i>
     </div>
-    <div class="text-center mb-7">
-      <h1 class="text-2xl font-bold tracking-tight">TI<span class="text-blue-400">Connect</span></h1>
-      <p class="text-sm text-slate-400 mt-2">Gestão de infraestrutura e serviços de TI</p>
-    </div>
-    <label class="block text-xs text-slate-300 mb-1.5">Nome de acesso</label>
-    <input id="login-user" class="field mb-4" value="Andrielle Souza" required>
     
-    <label class="block text-xs text-slate-300 mb-1.5">Senha de demonstração</label>
-    <input id="login-pass" class="field mb-5" type="password" value="123456" required>
-    
-    <button class="btn btn-primary w-full py-3" type="submit">
-      <i class="fa-solid fa-right-to-bracket"></i> Entrar no sistema
-    </button>
-    <p class="text-xs text-slate-500 text-center mt-4">Protótipo local • Acesso web e mobile</p>
-  </form>
+    <!-- FORMULÁRIO DE LOGIN -->
+    <form id="login-form">
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold tracking-tight">TI<span class="text-blue-400">Connect</span></h1>
+        <p class="text-sm text-slate-400 mt-1">Gestão de infraestrutura e serviços de TI</p>
+      </div>
+      <label class="block text-xs text-slate-300 mb-1.5">E-mail ou Nome de acesso</label>
+      <input id="login-user" class="field mb-4" value="andrielle@ufsc.br" required>
+      
+      <label class="block text-xs text-slate-300 mb-1.5">Senha</label>
+      <input id="login-pass" class="field mb-5" type="password" placeholder="Digite sua senha" required>
+      
+      <button class="btn btn-primary w-full py-3 mb-3" type="submit">
+        <i class="fa-solid fa-right-to-bracket"></i> Entrar no sistema
+      </button>
+      <div class="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800">
+        <span>Não tem uma conta?</span>
+        <button type="button" id="show-register-btn" class="text-blue-400 hover:underline font-semibold">Cadastrar equipe</button>
+      </div>
+    </form>
+
+    <!-- FORMULÁRIO DE CADASTRO -->
+    <form id="register-form" class="hidden">
+      <div class="text-center mb-6">
+        <h1 class="text-xl font-bold tracking-tight">Criar Nova Conta</h1>
+        <p class="text-sm text-slate-400 mt-1">Defina credenciais seguras para acesso</p>
+      </div>
+      <label class="block text-xs text-slate-300 mb-1.5">Nome completo</label>
+      <input id="reg-name" class="field mb-3" placeholder="Ex: Carlos Silva" required>
+
+      <label class="block text-xs text-slate-300 mb-1.5">E-mail corporativo</label>
+      <input id="reg-email" class="field mb-3" type="email" placeholder="carlos@ticonnect.com" required>
+      
+      <label class="block text-xs text-slate-300 mb-1.5">Cargo / Setor</label>
+      <input id="reg-role" class="field mb-3" placeholder="Ex: Suporte Técnico" value="Suporte Técnico" required>
+
+      <label class="block text-xs text-slate-300 mb-1.5">Senha de acesso</label>
+      <input id="reg-pass" class="field mb-2" type="password" placeholder="8 a 12 caracteres" required>
+      <p class="text-[11px] text-slate-400 mb-4 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
+        <i class="fa-solid fa-shield-halved text-blue-400 mr-1"></i> A senha deve ter entre <strong>8 e 12 caracteres</strong>, incluindo letra maiúscula, minúscula, número e caractere especial (ex: <code>Senha@123</code>).
+      </p>
+      
+      <button class="btn btn-primary w-full py-3 mb-3" type="submit">
+        <i class="fa-solid fa-user-plus"></i> Registrar conta
+      </button>
+      <div class="text-center text-xs text-slate-400 pt-2 border-t border-slate-800">
+        <button type="button" id="show-login-btn" class="text-blue-400 hover:underline font-semibold"><i class="fa-solid fa-arrow-left mr-1"></i> Voltar ao login</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- APLICAÇÃO PRINCIPAL -->
@@ -86,7 +145,7 @@ input[type=checkbox] { accent-color: #3b82f6; }
   <!-- SIDEBAR DESKTOP -->
   <aside id="sidebar" class="fixed left-0 top-0 z-30 flex h-screen w-64 flex-col border-r border-slate-800 bg-slate-950">
     <div class="brand flex items-center gap-3 border-b border-slate-800 px-5 py-5">
-      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-lg">
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-lg text-white">
         <i class="fa-solid fa-network-wired"></i>
       </div>
       <div>
@@ -99,19 +158,21 @@ input[type=checkbox] { accent-color: #3b82f6; }
     <nav class="space-y-1 px-3">
       <button class="navbtn active" data-tab="dashboard"><i class="fa-solid fa-chart-pie w-5 text-center"></i><span>Visão geral</span></button>
       <button class="navbtn" data-tab="tickets"><i class="fa-solid fa-headset w-5 text-center"></i><span>Chamados</span></button>
+      <button class="navbtn" data-tab="notes"><i class="fa-solid fa-note-sticky w-5 text-center"></i><span>Bloco de notas</span></button>
       <button class="navbtn" data-tab="assets"><i class="fa-solid fa-laptop w-5 text-center"></i><span>Equipamentos</span></button>
       <button class="navbtn" data-tab="network"><i class="fa-solid fa-diagram-project w-5 text-center"></i><span>Infraestrutura de rede</span></button>
       <button class="navbtn" data-tab="printers"><i class="fa-solid fa-print w-5 text-center"></i><span>Impressoras</span></button>
       <button class="navbtn" data-tab="stock"><i class="fa-solid fa-boxes-stacked w-5 text-center"></i><span>Estoque de materiais</span></button>
       <button class="navbtn" data-tab="deliveries"><i class="fa-solid fa-file-signature w-5 text-center"></i><span>Entregas e cautelas</span></button>
+      <button class="navbtn" data-tab="users"><i class="fa-solid fa-users-gear w-5 text-center"></i><span>Equipe e acessos</span></button>
     </nav>
 
     <div class="mt-auto border-t border-slate-800 p-4">
       <div class="profile flex items-center gap-3">
-        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-bold">AS</div>
+        <div id="profile-avatar" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-bold text-white">AS</div>
         <div class="min-w-0 flex-1">
           <div id="profile-name" class="truncate text-sm font-semibold">Andrielle Souza</div>
-          <div class="text-xs text-slate-500">Gestão de TI</div>
+          <div id="profile-role" class="text-xs text-slate-500">Gestão de TI</div>
         </div>
         <button id="logout-btn" class="ml-auto text-slate-500 hover:text-red-400 p-2" title="Sair"><i class="fa-solid fa-right-from-bracket"></i></button>
       </div>
@@ -122,8 +183,8 @@ input[type=checkbox] { accent-color: #3b82f6; }
   <div id="mobile-nav" class="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t border-slate-800 px-2 py-2 backdrop-blur justify-around items-center">
     <button class="flex flex-col items-center gap-1 p-2 text-slate-400 navbtn-m active" data-tab="dashboard"><i class="fa-solid fa-chart-pie text-lg"></i><span class="text-[10px]">Início</span></button>
     <button class="flex flex-col items-center gap-1 p-2 text-slate-400 navbtn-m" data-tab="tickets"><i class="fa-solid fa-headset text-lg"></i><span class="text-[10px]">Chamados</span></button>
-    <button class="flex flex-col items-center gap-1 p-2 text-slate-400 navbtn-m" data-tab="printers"><i class="fa-solid fa-print text-lg"></i><span class="text-[10px]">Impressoras</span></button>
-    <button class="flex flex-col items-center gap-1 p-2 text-slate-400 navbtn-m" data-tab="stock"><i class="fa-solid fa-boxes-stacked text-lg"></i><span class="text-[10px]">Estoque</span></button>
+    <button class="flex flex-col items-center gap-1 p-2 text-slate-400 navbtn-m" data-tab="notes"><i class="fa-solid fa-note-sticky text-lg"></i><span class="text-[10px]">Notas</span></button>
+    <button class="flex flex-col items-center gap-1 p-2 text-slate-400 navbtn-m" data-tab="users"><i class="fa-solid fa-users-gear text-lg"></i><span class="text-[10px]">Equipe</span></button>
     <button class="flex flex-col items-center gap-1 p-2 text-slate-400 navbtn-m" data-tab="network"><i class="fa-solid fa-network-wired text-lg"></i><span class="text-[10px]">Rede</span></button>
   </div>
 
@@ -161,14 +222,14 @@ input[type=checkbox] { accent-color: #3b82f6; }
             <div class="mt-1 text-[11px] text-slate-500">Inventário</div>
           </div>
           <div class="kpi">
-            <div class="flex justify-between"><span class="text-xs sm:text-sm text-slate-400">Rede</span><span class="text-cyan-400"><i class="fa-solid fa-network-wired"></i></span></div>
-            <div id="kpi-network" class="mt-2 text-2xl sm:text-3xl font-bold">0</div>
-            <div class="mt-1 text-[11px] text-slate-500">Pontos mapeados</div>
+            <div class="flex justify-between"><span class="text-xs sm:text-sm text-slate-400">Notas</span><span class="text-amber-400"><i class="fa-solid fa-note-sticky"></i></span></div>
+            <div id="kpi-notes" class="mt-2 text-2xl sm:text-3xl font-bold">0</div>
+            <div class="mt-1 text-[11px] text-slate-500">Post-its salvos</div>
           </div>
           <div class="kpi">
-            <div class="flex justify-between"><span class="text-xs sm:text-sm text-slate-400">Cautelas</span><span class="text-emerald-400"><i class="fa-solid fa-file-signature"></i></span></div>
-            <div id="kpi-deliveries" class="mt-2 text-2xl sm:text-3xl font-bold">0</div>
-            <div class="mt-1 text-[11px] text-slate-500">Histórico</div>
+            <div class="flex justify-between"><span class="text-xs sm:text-sm text-slate-400">Equipe</span><span class="text-emerald-400"><i class="fa-solid fa-users"></i></span></div>
+            <div id="kpi-users" class="mt-2 text-2xl sm:text-3xl font-bold">0</div>
+            <div class="mt-1 text-[11px] text-slate-500">Membros ativos</div>
           </div>
         </div>
 
@@ -189,9 +250,9 @@ input[type=checkbox] { accent-color: #3b82f6; }
             <p class="mt-1 mb-4 text-xs text-slate-500">Cadastre ou registre uma atividade</p>
             <div class="space-y-2">
               <button class="btn btn-muted w-full justify-start" data-action="ticket"><i class="fa-solid fa-circle-plus w-5 text-blue-400"></i>Novo chamado</button>
+              <button class="btn btn-muted w-full justify-start" data-action="note"><i class="fa-solid fa-note-sticky w-5 text-amber-400"></i>Criar Post-it</button>
+              <button class="btn btn-muted w-full justify-start" data-action="user"><i class="fa-solid fa-user-plus w-5 text-emerald-400"></i>Cadastrar membro</button>
               <button class="btn btn-muted w-full justify-start" data-action="asset"><i class="fa-solid fa-laptop w-5 text-violet-400"></i>Cadastrar equipamento</button>
-              <button class="btn btn-muted w-full justify-start" data-action="network"><i class="fa-solid fa-ethernet w-5 text-cyan-400"></i>Mapear ponto de rede</button>
-              <button class="btn btn-muted w-full justify-start" data-action="printer"><i class="fa-solid fa-print w-5 text-emerald-400"></i>Cadastrar impressora</button>
             </div>
           </div>
         </div>
@@ -217,6 +278,31 @@ input[type=checkbox] { accent-color: #3b82f6; }
           <table class="table">
             <thead><tr><th>ID</th><th>Solicitação</th><th>Colaborador</th><th>Responsável</th><th>Prioridade</th><th>Status</th><th>Ações</th></tr></thead>
             <tbody id="tickets-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BLOCO DE NOTAS (POST-ITS) -->
+      <section id="tab-notes" class="hidden space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div><h3 class="text-xl font-semibold">Bloco de notas</h3><p class="mt-1 text-sm text-slate-400">Seu mural de post-its para lembretes rápidos e anotações.</p></div>
+          <button class="btn btn-primary" data-action="note"><i class="fa-solid fa-plus"></i> Novo Post-it</button>
+        </div>
+        <div class="panel p-4"><input id="note-search" class="field" placeholder="Buscar nas notas por título ou conteúdo..."></div>
+        <div id="notes-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+      </section>
+
+      <!-- EQUIPE E ACESSOS -->
+      <section id="tab-users" class="hidden space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div><h3 class="text-xl font-semibold">Equipe e acessos</h3><p class="mt-1 text-sm text-slate-400">Gerencie os membros cadastrados, e-mails, senhas e permissões.</p></div>
+          <button class="btn btn-primary" data-action="user"><i class="fa-solid fa-user-plus"></i> Cadastrar membro</button>
+        </div>
+        <div class="panel p-4"><input id="user-search" class="field" placeholder="Buscar membro por nome, e-mail ou cargo..."></div>
+        <div class="panel table-wrap">
+          <table class="table">
+            <thead><tr><th>Membro</th><th>E-mail</th><th>Cargo / Função</th><th>Senha</th><th>Cadastro</th><th>Ações</th></tr></thead>
+            <tbody id="users-table"></tbody>
           </table>
         </div>
       </section>
@@ -309,66 +395,25 @@ const $ = id => document.getElementById(id);
 const STORE = 'ticonnect-prototype-v1';
 
 const initial = {
+  currentUser: { name: 'Andrielle Souza', email: 'andrielle@ufsc.br', role: 'Gestão de TI' },
+  users: [
+    { id: 1, name: 'Andrielle Souza', email: 'andrielle@ufsc.br', role: 'Gestão de TI', pass: 'Admin@123', created: '2026-08-31' },
+    { id: 2, name: 'Carlos Silva', email: 'carlos@ticonnect.com', role: 'Suporte Técnico', pass: 'Suporte@2026', created: '2026-09-01' }
+  ],
   tickets: [
     { id: 1001, title: 'Microfone não funciona', requester: 'Colaborador de teste', assignee: 'Andrielle', priority: 'Alta', status: 'Em análise', description: 'Verificar entrada e permissões de áudio.', created: new Date().toISOString().slice(0,10), solution: '' },
     { id: 1002, title: 'Instalação de equipamento', requester: 'Pessoa de teste', assignee: 'Equipe de TI', priority: 'Normal', status: 'Novo', description: 'Preparar estação de trabalho.', created: new Date().toISOString().slice(0,10), solution: '' }
+  ],
+  notes: [
+    { id: 1, title: 'Lembrete de Rede', content: 'Trocar o patch cord do switch principal no armário do 2º andar.', color: 'note-yellow', updated: new Date().toISOString().slice(0,10) },
+    { id: 2, title: 'Plantão TI', content: 'Conferir toner da impressora da contabilidade (CO_FIN_PB_01).', color: 'note-blue', updated: new Date().toISOString().slice(0,10) }
   ],
   assets: [{ id: 1, tag: 'PAT-0001', type: 'Notebook', model: 'Dell Latitude (exemplo)', location: 'Matriz / TI', owner: 'Estoque de TI', status: 'Em estoque' }],
   network: [{ id: 1, point: 'Sala de teste - Ponto A1', rack: 'Rack 01 / PP 01', switch: 'SW-TESTE-01', port: 'Gi1/0/1', vlan: '10', ip: '192.0.2.10', mac: '00:00:00:00:00:01' }],
   printers: [
     { region: 'REGIÃO: CONTINENTE' },
     { id: 1, name: 'CO_ADM_PB_01', serial: 'BRBSS9H02K', ip: '192.168.40.66', location: 'Continente', toner: 1 },
-    { id: 2, name: 'CO_ADM_PB_02', serial: 'BRBSO1FF4Y', ip: '192.168.40.247', location: 'Continente', toner: 1 },
-    { id: 3, name: 'CO_COM_PB_01', serial: 'BRBSNCRN33', ip: '192.168.40.70', location: 'Continente', toner: 1 },
-    { id: 4, name: 'CO_COND_PB_01', serial: 'BRBSN9JKF4', ip: '192.168.80.238', location: 'Continente', toner: 1 },
-    { id: 5, name: 'CO_CPD_PB_01 (iR C3025)', serial: 'WVS02059', ip: '192.168.30.234', location: 'Continente / CPD', toner: 1 },
-    { id: 6, name: 'CO_DES_PB_01', serial: 'BRBSO1FDX7', ip: '192.168.20.62', location: 'Continente', toner: 1 },
-    { id: 7, name: 'CO_DIR_PB_01', serial: 'BRBSN9FFW1', ip: '192.168.70.141', location: 'Continente', toner: 1 },
-    { id: 8, name: 'CO_FIN_PB_01', serial: 'BRBSR2Q18H', ip: '192.168.40.85', location: 'Continente', toner: 1 },
-    { id: 9, name: 'CO_GERFIN_PB_01', serial: 'BRBSR2Q16N', ip: '192.168.10.159', location: 'Continente', toner: 1 },
-    { id: 10, name: 'CO_JUR_PB_01', serial: 'BRBSO1FF4B', ip: '192.168.60.221', location: 'Continente', toner: 1 },
-    { id: 11, name: 'CO_LOC_CL_01', serial: 'X3C3000328', ip: '192.168.50.232', location: 'Continente', toner: 1 },
-    { id: 12, name: 'CO_LOC_PB_01', serial: 'BRBSO1FDWQ', ip: '192.168.70.77', location: 'Continente', toner: 1 },
-    { id: 13, name: 'CO_MAN_PB_01', serial: 'BRBSNDNBCN', ip: '192.168.70.57', location: 'Continente', toner: 1 },
-    { id: 14, name: 'CO_NEG_PB_01', serial: 'BRBSQ5TON5', ip: '192.168.80.225', location: 'Continente', toner: 1 },
-    { id: 15, name: 'CO_RH_PB_01', serial: 'BRBSNCRN7R', ip: '192.168.80.223', location: 'Continente', toner: 1 },
-    { id: 16, name: 'CO_TES_PB_01', serial: 'BRBSO1FFBF', ip: '192.168.50.236', location: 'Continente', toner: 1 },
-    { id: 17, name: 'CO_VIS_PB_01', serial: 'BRBSN9JK1S', ip: '192.168.60.218', location: 'Continente', toner: 1 },
-    { id: 18, name: 'CO_REC_CL', serial: 'X3B7001215', ip: '192.168.20.186', location: 'Continente', toner: 1 },
-    { id: 19, name: 'Gerj (Lauro)', serial: 'X3B7012718', ip: '192.168.50.237', location: 'Continente', toner: 1 },
-    { id: 20, name: 'CO_VALC_PB_01', serial: 'BRBSQ691CV', ip: '192.168.80.50', location: 'Continente', toner: 1 },
-
-    { region: 'REGIÃO: KOBRASOL' },
-    { id: 21, name: 'KO_ADM_CL_01', serial: 'X3C3000532', ip: '172.16.21.199', location: 'Kobrasol', toner: 1 },
-    { id: 22, name: 'KO_LOC_PB_01', serial: 'BRBSNDNBCW', ip: '172.16.21.172', location: 'Kobrasol', toner: 1 },
-    { id: 23, name: 'CO_DES_PB_02', serial: 'BRBSO1FFCM', ip: '172.16.21.66', location: 'Kobrasol', toner: 1 },
-
-    { region: 'REGIÃO: PALHOÇA' },
-    { id: 24, name: 'PA_ADM_CL_01', serial: 'X3C3000462', ip: '172.16.22.218', location: 'Palhoça', toner: 1 },
-    { id: 25, name: 'PA_LOC_PB_01', serial: 'BRBSNDNBFN', ip: '172.16.22.212', location: 'Palhoça', toner: 1 },
-    { id: 26, name: 'PA_DES_PB_01', serial: 'BRBST2ROK4', ip: '172.16.22.230', location: 'Palhoça', toner: 1 },
-
-    { region: 'REGIÃO: TRINDADE' },
-    { id: 27, name: 'TRI_ADM_CL_01', serial: 'X3B7016907', ip: '172.16.23.161', location: 'Trindade', toner: 1 },
-    { id: 28, name: 'TRI_LOC_PB_01', serial: 'BRBSS430H3', ip: '172.16.23.205', location: 'Trindade', toner: 1 },
-
-    { region: 'REGIÃO: CENTRO' },
-    { id: 29, name: 'CE_ADM_CL_01', serial: 'X3C3000443', ip: '172.16.20.105', location: 'Centro', toner: 1 },
-    { id: 30, name: 'CE_DES_PB_01', serial: 'BRBSS4POM3', ip: '172.16.20.9', location: 'Centro', toner: 1 },
-    { id: 31, name: 'CE_LOC_PB_01', serial: 'BRBSSNDPBN4', ip: '172.16.20.70', location: 'Centro', toner: 1 },
-
-    { region: 'REGIÃO: SUL DA ILHA' },
-    { id: 32, name: 'SU_COM_CL', serial: 'X3B7030027', ip: '172.16.24.151', location: 'Sul da Ilha', toner: 1 },
-    { id: 33, name: 'SU_LOC_PB', serial: 'BRBSR3H09K', ip: '172.16.24.150', location: 'Sul da Ilha', toner: 1 },
-
-    { region: 'REGIÃO: BIGUAÇU' },
-    { id: 34, name: 'BI_ADM_CL_01', serial: 'X3B7029941', ip: '172.16.25.64', location: 'Biguaçu', toner: 1 },
-    { id: 35, name: 'BI_LOC_PB_01', serial: 'BRBSR160CB', ip: '172.16.25.63', location: 'Biguaçu', toner: 1 },
-    { id: 36, name: 'BI_DES_PB_01', serial: 'BRBSR160BW', ip: '172.16.26.64', location: 'Biguaçu', toner: 1 },
-
-    { region: 'REGIÃO: NORTE DA ILHA' },
-    { id: 37, name: 'NO_ADM_CL_01', serial: 'XBJZ021428', ip: '172.16.26.63', location: 'Norte da Ilha', toner: 1 },
-    { id: 38, name: 'NO_LOC_PB_01', serial: 'BRBSS6SOBS', ip: '172.16.26.62', location: 'Norte da Ilha', toner: 1 }
+    { id: 2, name: 'CO_ADM_PB_02', serial: 'BRBSO1FF4Y', ip: '192.168.40.247', location: 'Continente', toner: 1 }
   ],
   stock: [{ id: 1, name: 'Cabo de rede (exemplo)', qty: 5, min: 2, location: 'Armário de TI' }],
   deliveries: []
@@ -404,6 +449,16 @@ function toast(msg) {
   toastTimer = setTimeout(() => $('toast').classList.add('hidden'), 2800);
 }
 
+// VALIDADOR DE SENHA SEGURA (8 a 12 caracteres, maiúscula, minúscula, número e caractere especial)
+function validatePassword(pass) {
+  if (pass.length < 8 || pass.length > 12) return 'A senha deve ter entre 8 e 12 caracteres.';
+  if (!/[A-Z]/.test(pass)) return 'A senha deve conter ao menos uma letra maiúscula.';
+  if (!/[a-z]/.test(pass)) return 'A senha deve conter ao menos uma letra minúscula.';
+  if (!/[0-9]/.test(pass)) return 'A senha deve conter ao menos um número.';
+  if (!/[^A-Za-z0-9]/.test(pass)) return 'A senha deve conter ao menos um caractere especial (ex: @, #, !, $).';
+  return null;
+}
+
 function statusBadge(s) {
   let c = s === 'Concluído' || s === 'Assinado' ? 'badge-green' : s === 'Aguardando' ? 'badge-amber' : s === 'Em análise' ? 'badge-blue' : s === 'Novo' ? 'badge-red' : 'badge';
   return `<span class="badge ${c}">${esc(s)}</span>`;
@@ -424,6 +479,8 @@ function go(tab) {
   const titles = {
     dashboard: 'Visão geral',
     tickets: 'Chamados',
+    notes: 'Bloco de notas',
+    users: 'Equipe e acessos',
     assets: 'Equipamentos',
     network: 'Infraestrutura de rede',
     printers: 'Gestão de impressoras',
@@ -448,6 +505,23 @@ function openAction(type, id = null) {
         ['status', 'Status', 'select', true, ['Novo', 'Em análise', 'Aguardando', 'Concluído']],
         ['description', 'Descrição / diagnóstico', 'textarea', false],
         ['solution', 'Solução aplicada / observações', 'textarea', false]
+      ]
+    },
+    note: {
+      title: id ? 'Editar Post-it' : 'Novo Post-it',
+      fields: [
+        ['title', 'Título da nota', 'text', true],
+        ['color', 'Cor do Post-it', 'select', true, ['Amarelo (note-yellow)', 'Azul (note-blue)', 'Verde (note-green)', 'Rosa (note-pink)', 'Roxo (note-purple)']],
+        ['content', 'Conteúdo da nota', 'textarea', true]
+      ]
+    },
+    user: {
+      title: id ? 'Editar membro da equipe' : 'Cadastrar novo membro',
+      fields: [
+        ['name', 'Nome completo', 'text', true],
+        ['email', 'E-mail corporativo', 'email', true],
+        ['role', 'Cargo / Função', 'text', true],
+        ['pass', 'Senha segura (8 a 12 caracteres)', 'text', true]
       ]
     },
     asset: {
@@ -508,19 +582,24 @@ function openAction(type, id = null) {
   const form = forms[type];
   if (!form) return;
 
-  const list = db[type === 'ticket' ? 'tickets' : type === 'asset' ? 'assets' : type === 'network' ? 'network' : type === 'printer' ? 'printers' : type === 'stock' ? 'stock' : 'deliveries'];
+  const list = db[type === 'ticket' ? 'tickets' : type === 'note' ? 'notes' : type === 'user' ? 'users' : type === 'asset' ? 'assets' : type === 'network' ? 'network' : type === 'printer' ? 'printers' : type === 'stock' ? 'stock' : 'deliveries'];
   const item = id ? list.find(x => x.id === id) : {};
   if (id && !item) { toast('Registro não encontrado.'); return; }
 
   const fields = form.fields.map(([key, label, kind, required, opts]) => {
-    let value = item[key] ?? (key === 'status' ? 'Novo' : key === 'priority' ? 'Normal' : key === 'date' ? new Date().toISOString().slice(0, 10) : key === 'toner' || key === 'qty' || key === 'min' ? 0 : '');
+    let value = item[key] ?? (key === 'status' ? 'Novo' : key === 'priority' ? 'Normal' : key === 'date' ? new Date().toISOString().slice(0, 10) : key === 'color' ? 'note-yellow' : key === 'pass' ? 'Admin@123' : key === 'toner' || key === 'qty' || key === 'min' ? 0 : '');
     let control = kind === 'select' ? 
-      `<select class="field" name="${key}" ${required ? 'required' : ''}>${opts.map(o => `<option ${String(value) === o ? 'selected' : ''}>${o}</option>`).join('')}</select>` : 
+      `<select class="field" name="${key}" ${required ? 'required' : ''}>${opts.map(o => {
+        let val = key === 'color' ? o.match(/\((.*?)\)/)[1] : o;
+        let labelName = key === 'color' ? o.split(' ')[0] : o;
+        return `<option value="${val}" ${String(value) === val ? 'selected' : ''}>${labelName}</option>`;
+      }).join('')}</select>` : 
       kind === 'textarea' ? 
-      `<textarea class="field min-h-24" name="${key}">${esc(value)}</textarea>` : 
+      `<textarea class="field min-h-24" name="${key}" ${required ? 'required' : ''}>${esc(value)}</textarea>` : 
       `<input class="field" name="${key}" type="${kind}" value="${esc(value)}" ${required ? 'required' : ''} ${kind === 'number' ? 'min="0"' : ''}>`;
     
-    return `<label class="block text-xs text-slate-300">${label}${required ? ' *' : ''}<div class="mt-1.5">${control}</div></label>`;
+    let extraHint = key === 'pass' ? `<p class="text-[10px] text-slate-400 mt-1">8 a 12 caracteres (Maiúscula, minúscula, número e símbolo).</p>` : '';
+    return `<label class="block text-xs text-slate-300">${label}${required ? ' *' : ''}<div class="mt-1.5">${control}</div>${extraHint}</label>`;
   }).join('');
 
   $('modal-root').innerHTML = `
@@ -550,7 +629,7 @@ function closeModal() {
 
 function deleteRecord(type, id) {
   if (!confirm('Tem certeza de que deseja excluir este registro? Esta ação não pode ser desfeita.')) return;
-  const key = { ticket: 'tickets', asset: 'assets', network: 'network', printer: 'printers', stock: 'stock', delivery: 'deliveries' }[type];
+  const key = { ticket: 'tickets', note: 'notes', user: 'users', asset: 'assets', network: 'network', printer: 'printers', stock: 'stock', delivery: 'deliveries' }[type];
   db[key] = db[key].filter(x => x.id !== id);
   saveDB();
   toast('Registro excluído.');
@@ -563,18 +642,30 @@ function actionButtons(type, id) {
 function renderAll() {
   renderDashboard();
   renderTickets();
+  renderNotes();
+  renderUsers();
   renderAssets();
   renderNetwork();
   renderPrinters();
   renderStock();
   renderDeliveries();
+  updateProfileUI();
+}
+
+function updateProfileUI() {
+  const u = db.currentUser || { name: 'Usuário', email: '', role: 'TI' };
+  $('profile-name').textContent = u.name;
+  $('profile-role').textContent = u.role || 'Gestão de TI';
+  $('welcome-name').textContent = u.name.split(' ')[0];
+  const initials = u.name.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase();
+  $('profile-avatar').textContent = initials || 'TI';
 }
 
 function renderDashboard() {
   $('kpi-tickets').textContent = db.tickets.filter(x => x.status !== 'Concluído').length;
   $('kpi-assets').textContent = db.assets.length;
-  $('kpi-network').textContent = db.network.length;
-  $('kpi-deliveries').textContent = db.deliveries.length;
+  $('kpi-notes').textContent = db.notes.length;
+  $('kpi-users').textContent = db.users.length;
   
   const items = [...db.tickets].sort((a, b) => String(b.created).localeCompare(String(a.created))).slice(0, 5);
   $('recent-tickets').innerHTML = items.length ? items.map(t => `
@@ -600,6 +691,41 @@ function renderTickets() {
       <td>${statusBadge(t.status)}</td>
       <td>${actionButtons('ticket', t.id)}</td>
     </tr>`).join('') : emptyRow(7);
+}
+
+function renderNotes() {
+  let q = ($('note-search')?.value || '').toLowerCase();
+  let rows = db.notes.filter(n => [n.title, n.content].join(' ').toLowerCase().includes(q));
+  
+  $('notes-grid').innerHTML = rows.length ? rows.map(n => `
+    <div class="note-card ${n.color || 'note-yellow'}" data-edit="note:${n.id}">
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-bold text-sm tracking-tight">${esc(n.title)}</h4>
+          <span class="text-[10px] opacity-75 font-mono">${esc(n.updated || '')}</span>
+        </div>
+        <p class="text-xs whitespace-pre-wrap leading-relaxed opacity-90">${esc(n.content)}</p>
+      </div>
+      <div class="mt-4 pt-2 border-t border-black/10 flex justify-end gap-2" onclick="event.stopPropagation()">
+        <button class="text-xs font-semibold hover:underline opacity-80" data-edit="note:${n.id}"><i class="fa-solid fa-pen mr-1"></i> Editar</button>
+        <button class="text-xs font-semibold hover:underline opacity-80 ml-2" data-delete="note:${n.id}"><i class="fa-solid fa-trash mr-1"></i> Excluir</button>
+      </div>
+    </div>`).join('') : '<div class="col-span-full py-12 text-center text-slate-500"><i class="fa-solid fa-note-sticky text-3xl mb-2 block"></i>Nenhum Post-it encontrado. Clique em "Novo Post-it" para criar um.</div>';
+}
+
+function renderUsers() {
+  let q = ($('user-search')?.value || '').toLowerCase();
+  let rows = db.users.filter(u => [u.name, u.email, u.role].join(' ').toLowerCase().includes(q));
+  
+  $('users-table').innerHTML = rows.length ? rows.map(u => `
+    <tr>
+      <td class="font-medium flex items-center gap-2"><div class="h-7 w-7 rounded-full bg-blue-900 text-blue-200 flex items-center justify-center text-xs font-bold">${u.name.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase()}</div>${esc(u.name)}</td>
+      <td class="text-slate-300">${esc(u.email || '—')}</td>
+      <td>${esc(u.role)}</td>
+      <td class="font-mono text-slate-400">••••••</td>
+      <td class="text-slate-500">${esc(u.created || '—')}</td>
+      <td>${actionButtons('user', u.id)}</td>
+    </tr>`).join('') : emptyRow(6);
 }
 
 function renderAssets() {
@@ -733,6 +859,44 @@ document.addEventListener('click', e => {
   }
 });
 
+// Alternar entre tela de Login e Cadastro
+$('show-register-btn').addEventListener('click', () => {
+  $('login-form').classList.add('hidden');
+  $('register-form').classList.remove('hidden');
+});
+
+$('show-login-btn').addEventListener('click', () => {
+  $('register-form').classList.add('hidden');
+  $('login-form').classList.remove('hidden');
+});
+
+// Ação de Cadastrar Nova Conta na tela inicial
+$('register-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = $('reg-name').value.trim();
+  const email = $('reg-email').value.trim();
+  const role = $('reg-role').value.trim();
+  const pass = $('reg-pass').value.trim();
+  
+  const passError = validatePassword(pass);
+  if (passError) {
+    toast('⚠️ ' + passError);
+    return;
+  }
+  
+  const newId = Math.max(0, ...db.users.map(u => u.id || 0)) + 1;
+  const newUser = { id: newId, name, email, role, pass, created: new Date().toISOString().slice(0, 10) };
+  
+  db.users.push(newUser);
+  db.currentUser = { name, email, role };
+  saveDB();
+  
+  $('auth-screen').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  go('dashboard');
+  toast(`Conta criada com sucesso! Bem-vindo(a), ${name}.`);
+});
+
 document.addEventListener('submit', e => {
   if (e.target.id !== 'record-form') return;
   e.preventDefault();
@@ -742,17 +906,27 @@ document.addEventListener('submit', e => {
   const id = f.dataset.id ? Number(f.dataset.id) : null;
   const values = Object.fromEntries(new FormData(f).entries());
   
+  if (type === 'user') {
+    const passError = validatePassword(values.pass);
+    if (passError) {
+      toast('⚠️ ' + passError);
+      return;
+    }
+  }
+  
   ['toner', 'qty', 'min'].forEach(k => {
     if (k in values) values[k] = Number(values[k] || 0);
   });
   
-  const key = { ticket: 'tickets', asset: 'assets', network: 'network', printer: 'printers', stock: 'stock', delivery: 'deliveries' }[type];
+  const key = { ticket: 'tickets', note: 'notes', user: 'users', asset: 'assets', network: 'network', printer: 'printers', stock: 'stock', delivery: 'deliveries' }[type];
   
   if (type === 'ticket' && !id) values.id = nextTicket++;
   else if (!id) values.id = Math.max(0, ...db[key].map(x => Number(x.id) || 0)) + 1;
   else values.id = id;
   
   if (type === 'ticket' && !id) values.created = new Date().toISOString().slice(0, 10);
+  if (type === 'note') values.updated = new Date().toISOString().slice(0, 10);
+  if (type === 'user' && !id) values.created = new Date().toISOString().slice(0, 10);
   
   if (id) {
     const ix = db[key].findIndex(x => x.id === id);
@@ -769,30 +943,45 @@ document.addEventListener('submit', e => {
 
 $('login-form').addEventListener('submit', e => {
   e.preventDefault();
-  const name = $('login-user').value.trim() || 'Usuário';
-  $('profile-name').textContent = name;
-  $('welcome-name').textContent = name.split(' ')[0];
-  $('login-screen').classList.add('hidden');
+  const loginInput = $('login-user').value.trim();
+  const passInput = $('login-pass').value.trim();
+  
+  const foundUser = db.users.find(u => u.name.toLowerCase() === loginInput.toLowerCase() || (u.email && u.email.toLowerCase() === loginInput.toLowerCase()));
+  
+  if (foundUser) {
+    if (foundUser.pass && foundUser.pass !== passInput) {
+      toast('⚠️ Senha incorreta. Tente novamente.');
+      return;
+    }
+    db.currentUser = { name: foundUser.name, email: foundUser.email, role: foundUser.role };
+  } else {
+    db.currentUser = { name: loginInput || 'Usuário', email: loginInput, role: 'Gestão de TI' };
+  }
+  
+  saveDB();
+  $('auth-screen').classList.add('hidden');
   $('app').classList.remove('hidden');
   go('dashboard');
-  toast('Bem-vinda ao TIConnect!');
+  toast(`Bem-vinda(o) ao TIConnect, ${db.currentUser.name}!`);
 });
 
 $('logout-btn').addEventListener('click', () => {
   if (confirm('Deseja sair do TIConnect?')) {
     $('app').classList.add('hidden');
-    $('login-screen').classList.remove('hidden');
+    $('auth-screen').classList.remove('hidden');
   }
 });
 
 $('header-new').addEventListener('click', () => {
-  const types = { dashboard: 'ticket', tickets: 'ticket', assets: 'asset', network: 'network', printers: 'printer', stock: 'stock', deliveries: 'delivery' };
+  const types = { dashboard: 'ticket', tickets: 'ticket', notes: 'note', users: 'user', assets: 'asset', network: 'network', printers: 'printer', stock: 'stock', deliveries: 'delivery' };
   openAction(types[currentTab] || 'ticket');
 });
 
 $('export-btn').addEventListener('click', exportData);
 
 ['ticket-search', 'ticket-status-filter'].forEach(id => $(id).addEventListener('input', renderTickets));
+['note-search'].forEach(id => $(id).addEventListener('input', renderNotes));
+['user-search'].forEach(id => $(id).addEventListener('input', renderUsers));
 ['asset-search'].forEach(id => $(id).addEventListener('input', renderAssets));
 ['network-search'].forEach(id => $(id).addEventListener('input', renderNetwork));
 ['printer-search'].forEach(id => $(id).addEventListener('input', renderPrinters));
