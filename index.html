@@ -89,16 +89,16 @@ input[type=checkbox] { accent-color: #3b82f6; }
     </div>
     
     <!-- FORMULÁRIO DE LOGIN -->
-    <form id="login-form">
+    <form id="login-form" autocomplete="on">
       <div class="text-center mb-6">
         <h1 class="text-2xl font-bold tracking-tight">TI<span class="text-blue-400">Connect</span></h1>
         <p class="text-sm text-slate-400 mt-1">Gestão de infraestrutura e serviços de TI</p>
       </div>
       <label class="block text-xs text-slate-300 mb-1.5">E-mail ou Nome de acesso</label>
-      <input id="login-user" class="field mb-4" value="andrielle@ufsc.br" required>
+      <input id="login-user" name="username" class="field mb-4" value="" autocomplete="username" required>
       
       <label class="block text-xs text-slate-300 mb-1.5">Senha</label>
-      <input id="login-pass" class="field mb-5" type="password" placeholder="Digite sua senha" required>
+      <input id="login-pass" name="password" class="field mb-5" type="password" placeholder="Digite sua senha" autocomplete="current-password" required>
       
       <button class="btn btn-primary w-full py-3 mb-3" type="submit">
         <i class="fa-solid fa-right-to-bracket"></i> Entrar no sistema
@@ -413,7 +413,51 @@ const initial = {
   printers: [
     { region: 'REGIÃO: CONTINENTE' },
     { id: 1, name: 'CO_ADM_PB_01', serial: 'BRBSS9H02K', ip: '192.168.40.66', location: 'Continente', toner: 1 },
-    { id: 2, name: 'CO_ADM_PB_02', serial: 'BRBSO1FF4Y', ip: '192.168.40.247', location: 'Continente', toner: 1 }
+    { id: 2, name: 'CO_ADM_PB_02', serial: 'BRBSO1FF4Y', ip: '192.168.40.247', location: 'Continente', toner: 1 },
+    { id: 3, name: 'CO_COM_PB_01', serial: 'BRBSNCRN33', ip: '192.168.40.70', location: 'Continente', toner: 1 },
+    { id: 4, name: 'CO_COND_PB_01', serial: 'BRBSN9JKF4', ip: '192.168.80.238', location: 'Continente', toner: 1 },
+    { id: 5, name: 'CO_CPD_PB_01', serial: 'iR C3025 (WVS02059)', ip: '192.168.30.234', location: 'Continente', toner: 1 },
+    { id: 6, name: 'CO_DES_PB_01', serial: 'BRBSO1FDX7', ip: '192.168.20.62', location: 'Continente', toner: 1 },
+    { id: 7, name: 'CO_DIR_PB_01', serial: 'BRBSN9FFW1', ip: '192.168.70.141', location: 'Continente', toner: 1 },
+    { id: 8, name: 'CO_FIN_PB_01', serial: 'BRBSR2Q18H', ip: '192.168.40.85', location: 'Continente', toner: 1 },
+    { id: 9, name: 'CO_GERFIN_PB_01', serial: 'BRBSR2Q16N', ip: '192.168.10.159', location: 'Continente', toner: 1 },
+    { id: 10, name: 'CO_JUR_PB_01', serial: 'BRBSO1FF4B', ip: '192.168.60.221', location: 'Continente', toner: 1 },
+    { id: 11, name: 'CO_LOC_CL_01', serial: 'X3C3000328', ip: '192.168.50.232', location: 'Continente', toner: 1 },
+    { id: 12, name: 'CO_LOC_PB_01', serial: 'BRBSO1FDWQ', ip: '192.168.70.77', location: 'Continente', toner: 1 },
+    { id: 13, name: 'CO_MAN_PB_01', serial: 'BRBSNDNBCN', ip: '192.168.70.57', location: 'Continente', toner: 1 },
+    { id: 14, name: 'CO_NEG_PB_01', serial: 'BRBSQ5T0N5', ip: '192.168.80.225', location: 'Continente', toner: 1 },
+    { id: 15, name: 'CO_RH_PB_01', serial: 'BRBSNCRN7R', ip: '192.168.80.223', location: 'Continente', toner: 1 },
+    { id: 16, name: 'CO_TES_PB_01', serial: 'BRBSO1FFBF', ip: '192.168.50.236', location: 'Continente', toner: 1 },
+    { id: 17, name: 'CO_VIS_PB_01', serial: 'BRBSN9JKIS', ip: '192.168.60.218', location: 'Continente', toner: 1 },
+    { id: 18, name: 'CO_REC_CL_01', serial: 'X3B7001215', ip: '192.168.20.186', location: 'Continente', toner: 1 },
+    { id: 19, name: 'Gerj (Lauro)', serial: 'X3B7012718', ip: '192.168.50.237', location: 'Continente', toner: 1 },
+    { id: 20, name: 'CO_VALC_PB_01', serial: 'BRBSQ691CV', ip: '192.168.80.50', location: 'Continente', toner: 1 },
+    { id: 21, name: 'SCANNER Fernando', serial: 'EE312879', ip: '', location: 'Continente', toner: 0 },
+    { region: 'KOBRASOL' },
+    { id: 22, name: 'KO_ADM_CL_01', serial: 'X3C3000532', ip: '172.16.21.199', location: 'Kobrasol', toner: 1 },
+    { id: 23, name: 'KO_LOC_PB_01', serial: 'BRBSDNDBCW', ip: '172.16.21.172', location: 'Kobrasol', toner: 1 },
+    { id: 24, name: 'CO_DES_PB_02', serial: 'BRBSO1FFCM', ip: '172.16.21.66', location: 'Kobrasol', toner: 1 },
+    { region: 'PALHOÇA' },
+    { id: 25, name: 'PA_ADM_CL_01', serial: 'X3C3000462', ip: '172.16.22.218', location: 'Palhoça', toner: 1 },
+    { id: 26, name: 'PA_LOC_PB_01', serial: 'BRBSDNDBFN', ip: '172.16.22.212', location: 'Palhoça', toner: 1 },
+    { id: 27, name: 'PA_DES_PB_01', serial: 'BRBST2R0K4', ip: '172.16.22.230', location: 'Palhoça', toner: 1 },
+    { region: 'TRINDADE' },
+    { id: 28, name: 'TRI_ADM_CL_01', serial: 'X3B7016907', ip: '172.16.23.161', location: 'Trindade', toner: 1 },
+    { id: 29, name: 'TRI_LOC_PB_01', serial: 'BRBSS430H3', ip: '172.16.23.205', location: 'Trindade', toner: 1 },
+    { region: 'CENTRO' },
+    { id: 30, name: 'CE_ADM_CL_01', serial: 'X3C3000443', ip: '172.16.20.105', location: 'Centro', toner: 1 },
+    { id: 31, name: 'CE_DES_PB_01', serial: 'BRBS44P0M3', ip: '172.16.20.9', location: 'Centro', toner: 1 },
+    { id: 32, name: 'CE_LOC_PB_01', serial: 'BRBSDNPPNB', ip: '172.16.20.70', location: 'Centro', toner: 1 },
+    { region: 'SUL DA ILHA' },
+    { id: 33, name: 'SU_COM_CL', serial: 'X3B7030027', ip: '172.16.24.151', location: 'Sul da Ilha', toner: 1 },
+    { id: 34, name: 'SU_LOC_PB', serial: 'BRBSR3H09K', ip: '172.16.24.150', location: 'Sul da Ilha', toner: 1 },
+    { region: 'BIGUAÇU' },
+    { id: 35, name: 'BI_ADM_CL_01', serial: 'X3B7029941', ip: '172.16.25.64', location: 'Biguaçu', toner: 1 },
+    { id: 36, name: 'BI_LOC_PB_01', serial: 'BRBSR160CB', ip: '172.16.25.63', location: 'Biguaçu', toner: 1 },
+    { id: 37, name: 'BI_DES_PB_01', serial: 'BRBSR160BW', ip: '172.16.26.64', location: 'Biguaçu', toner: 1 },
+    { region: 'NORTE DA ILHA' },
+    { id: 38, name: 'NO_ADM_CL_01', serial: 'XBJZ021428', ip: '172.16.26.63', location: 'Norte da Ilha', toner: 1 },
+    { id: 39, name: 'NO_LOC_PB_01', serial: 'BRBSS6S0BS', ip: '172.16.26.62', location: 'Norte da Ilha', toner: 1 }
   ],
   stock: [{ id: 1, name: 'Cabo de rede (exemplo)', qty: 5, min: 2, location: 'Armário de TI' }],
   deliveries: []
@@ -427,7 +471,17 @@ let toastTimer;
 function loadDB() {
   try {
     const v = JSON.parse(localStorage.getItem(STORE));
-    return v && v.tickets ? { ...structuredClone(initial), ...v } : structuredClone(initial);
+    if (v && v.tickets) {
+      const merged = { ...structuredClone(initial), ...v };
+      const savedPrinters = Array.isArray(v.printers) ? v.printers : [];
+      const seeded = structuredClone(initial.printers);
+      const savedByName = new Map(savedPrinters.filter(x => x.name).map(x => [x.name, x]));
+      merged.printers = seeded.map(x => x.name && savedByName.has(x.name) ? savedByName.get(x.name) : x);
+      const seededNames = new Set(seeded.filter(x => x.name).map(x => x.name));
+      merged.printers.push(...savedPrinters.filter(x => !x.region && x.name && !seededNames.has(x.name)));
+      return merged;
+    }
+    return structuredClone(initial);
   } catch {
     return structuredClone(initial);
   }
@@ -774,7 +828,7 @@ function renderPrinters() {
         <td class="font-mono text-emerald-300">${esc(x.ip)}</td>
         <td>${esc(x.location)}</td>
         <td>${Number(x.toner) || 0}</td>
-        <td><div class="flex gap-1"><button class="btn btn-muted !px-2 !py-1.5" data-open-ip="${esc(x.ip)}" title="Abrir IP Web"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>${actionButtons('printer', x.id)}</div></td>
+        <td><div class="flex gap-1">${x.ip ? `<button class="btn btn-muted !px-2 !py-1.5" data-open-ip="${esc(x.ip)}" title="Abrir painel web da impressora"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>` : `<button class="btn btn-muted !px-2 !py-1.5 opacity-40 cursor-not-allowed" disabled title="Sem IP cadastrado"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>`}${actionButtons('printer', x.id)}</div></td>
       </tr>`;
   }).join('') : emptyRow(6);
 }
